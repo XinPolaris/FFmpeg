@@ -718,6 +718,8 @@ typedef struct AVInputFormat {
      */
     int (*read_packet)(struct AVFormatContext *, AVPacket *pkt);
 
+    int (*read_preclose)(struct AVFormatContext *);
+
     /**
      * Close the stream. The AVFormatContext and AVStreams are not
      * freed by this function
@@ -2470,6 +2472,8 @@ int av_read_pause(AVFormatContext *s);
  * and set *s to NULL.
  */
 void avformat_close_input(AVFormatContext **s);
+
+void avformat_preclose_input(AVFormatContext **s);
 /**
  * @}
  */

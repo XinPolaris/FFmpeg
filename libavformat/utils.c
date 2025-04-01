@@ -4520,6 +4520,20 @@ void avformat_close_input(AVFormatContext **ps)
     avio_close(pb);
 }
 
+void avformat_preclose_input(AVFormatContext **ps)
+{
+    AVFormatContext *s;
+
+    if (!ps || !*ps)
+        return;
+
+    s  = *ps;
+
+    if (s->iformat)
+        if (s->iformat->read_preclose)
+            s->iformat->read_preclose(s);
+}
+
 AVStream *avformat_new_stream(AVFormatContext *s, const AVCodec *c)
 {
     AVStream *st;

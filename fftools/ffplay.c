@@ -1240,6 +1240,7 @@ static void stream_component_close(VideoState *is, int stream_index)
 
 static void stream_close(VideoState *is)
 {
+    avformat_preclose_input(&is->ic);
     /* XXX: use a special url_shutdown call to abort parse cleanly */
     is->abort_request = 1;
     SDL_WaitThread(is->read_tid, NULL);
