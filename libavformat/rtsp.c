@@ -1342,59 +1342,14 @@ static int rtsp_send_cmd_with_content_async(AVFormatContext *s,
 
     av_log(s, AV_LOG_TRACE, "Sending:\n%s--\n", buf);
 
-//    ffurl_write(rt->rtsp_hd_out, out_buf, strlen(out_buf));
-//    if (send_content_length > 0 && send_content) {
-//        if (rt->control_transport == RTSP_MODE_TUNNEL) {
-//            avpriv_report_missing_feature(s, "Tunneling of RTSP requests with content data");
-//            return AVERROR_PATCHWELCOME;
-//        }
-//        ffurl_write(rt->rtsp_hd_out, send_content, send_content_length);
-//    }
-
-    //----------------------------------------------------------
-    // 第一个ffurl_write调用：发送out_buf
-    //----------------------------------------------------------
-    // 检查所有必要指针有效性
-    if (rt && rt->rtsp_hd_out && out_buf) {
-        // 确保out_buf是合法C字符串（如果协议允许非字符串数据需改用其他长度计算方式）
-        size_t out_buf_len = strlen(out_buf);
-        if (out_buf_len > 0) {
-            // 调用前可添加日志观察实际参数
-            // av_log(s, AV_LOG_DEBUG, "Writing %zu bytes to rtsp_hd_out", out_buf_len);
-            ffurl_write(rt->rtsp_hd_out, out_buf, out_buf_len);
-        } else {
-            av_log(s, AV_LOG_WARNING, "Empty out_buf, skip writing");
-        }
-    } else {
-        av_log(s, AV_LOG_ERROR, "Invalid arguments for out_buf write");
-        // 返回错误码或终止操作
-        return AVERROR(EINVAL);
-    }
-
-    //----------------------------------------------------------
-    // 第二个ffurl_write调用：发送send_content
-    //----------------------------------------------------------
+    ffurl_write(rt->rtsp_hd_out, out_buf, strlen(out_buf));
     if (send_content_length > 0 && send_content) {
         if (rt->control_transport == RTSP_MODE_TUNNEL) {
             avpriv_report_missing_feature(s, "Tunneling of RTSP requests with content data");
             return AVERROR_PATCHWELCOME;
         }
-
-        // 再次检查关键指针（可能其他线程修改了rt）
-        if (rt && rt->rtsp_hd_out) {
-            // 检查实际数据长度是否合法（防止负数或溢出）
-            if (send_content_length > 0 && send_content_length <= INT_MAX) {
-                ffurl_write(rt->rtsp_hd_out, send_content, send_content_length);
-            } else {
-                av_log(s, AV_LOG_ERROR, "Invalid send_content_length: %d", send_content_length);
-                return AVERROR(EINVAL);
-            }
-        } else {
-            av_log(s, AV_LOG_ERROR, "rtsp_hd_out closed before sending content");
-            return AVERROR(EBADF);
-        }
+        ffurl_write(rt->rtsp_hd_out, send_content, send_content_length);
     }
-
     rt->last_cmd_time = av_gettime_relative();
 
     return 0;

@@ -75,11 +75,11 @@ static int rtsp_read_preclose(AVFormatContext *s)
     if (!(rt->rtsp_flags & RTSP_FLAG_LISTEN))
         ff_rtsp_send_cmd_async(s, "TEARDOWN", rt->control_uri, NULL);
 
-    ff_rtsp_close_streams(s);
-    ff_rtsp_close_connections(s);
-    ff_network_close();
-    rt->real_setup = NULL;
-    av_freep(&rt->real_setup_cache);
+//    ff_rtsp_close_streams(s);
+//    ff_rtsp_close_connections(s);
+//    ff_network_close();
+//    rt->real_setup = NULL;
+//    av_freep(&rt->real_setup_cache);
     return 0;
 }
 
