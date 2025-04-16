@@ -354,6 +354,7 @@ static inline int parse_nal_units(AVCodecParserContext *s,
             if (!p->ps.pps_list[pps_id]) {
                 av_log(avctx, AV_LOG_ERROR,
                        "non-existing PPS %u referenced\n", pps_id);
+                frame_err = 1;
                 goto fail;
             }
 
@@ -369,6 +370,7 @@ static inline int parse_nal_units(AVCodecParserContext *s,
             if (!p->ps.sps_list[p->ps.pps->sps_id]) {
                 av_log(avctx, AV_LOG_ERROR,
                        "non-existing SPS %u referenced\n", p->ps.pps->sps_id);
+                frame_err = 1;
                 goto fail;
             }
 
@@ -561,6 +563,7 @@ static inline int parse_nal_units(AVCodecParserContext *s,
     }
     /* didn't find a picture! */
     av_log(avctx, AV_LOG_ERROR, "missing picture in access unit with size %d\n", buf_size);
+    frame_err = 1;
 fail:
     av_freep(&rbsp.rbsp_buffer);
     return -1;

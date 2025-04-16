@@ -768,6 +768,9 @@ static int rtp_parse_queued_packet(RTPDemuxContext *s, AVPacket *pkt)
     if (!has_next_packet(s))
         av_log(s->ic, AV_LOG_WARNING,
                "RTP: missed %d packets\n", s->queue->seq - s->seq - 1);
+        //the flag of error frame
+        frame_err = 1;
+    }
 
     /* Parse the first packet in the queue, and dequeue it */
     rv   = rtp_parse_packet_internal(s, pkt, s->queue->buf, s->queue->len);
