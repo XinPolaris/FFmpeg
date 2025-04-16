@@ -3980,6 +3980,15 @@ static void *input_thread(void *arg)
         AVPacket pkt;
         ret = av_read_frame(f->ctx, &pkt);
 
+        if (pkt.nLostPackets) {
+            av_log(f->ctx, AV_LOG_WARNING, "Dropped packet with lost=%d, pts=%lld\n",
+                   pkt.nLostPackets, (long long)pkt.pts);
+            av_packet_unref(&pkt);
+            continue;
+        } else {
+            av_log(f->ctx, AV_LOG_INFO,"pkt: pts=%lld\n", (long long)pkt.pts);
+        }
+
         if (ret == AVERROR(EAGAIN)) {
             av_usleep(10000);
             continue;

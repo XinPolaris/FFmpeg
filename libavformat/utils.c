@@ -1581,6 +1581,8 @@ static int read_frame_internal(AVFormatContext *s, AVPacket *pkt)
     int ret = 0, i, got_packet = 0;
     AVDictionary *metadata = NULL;
 
+    int nLostPackets = 0;
+
     av_init_packet(pkt);
 
     while (!got_packet && !s->internal->parse_queue) {
@@ -1589,6 +1591,9 @@ static int read_frame_internal(AVFormatContext *s, AVPacket *pkt)
 
         /* read next packet */
         ret = ff_read_packet(s, &cur_pkt);
+
+        nLostPackets = cur_pkt.nLostPackets;
+
         if (ret < 0) {
             if (ret == AVERROR(EAGAIN))
                 return ret;
@@ -1770,6 +1775,10 @@ FF_ENABLE_DEPRECATION_WARNINGS
                av_ts2str(pkt->pts),
                av_ts2str(pkt->dts),
                pkt->size, pkt->duration, pkt->flags);
+
+    if (nLostPackets) {
+        pkt->nLostPackets = nLostPackets;
+    }
 
     return ret;
 }

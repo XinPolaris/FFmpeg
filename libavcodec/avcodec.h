@@ -1447,6 +1447,8 @@ typedef struct AVPacket {
      */
     int64_t duration;
 
+    int nLostPackets;
+
     int64_t pos;                            ///< byte position in stream, -1 if unknown
 
 #if FF_API_CONVERGENCE_DURATION
