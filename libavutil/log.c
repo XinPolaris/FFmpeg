@@ -41,6 +41,9 @@
 #include "log.h"
 #include "thread.h"
 
+int frame_err = 0;
+int decode_err = 0;
+
 static AVMutex mutex = AV_MUTEX_INITIALIZER;
 
 #define LINE_SZ 1024

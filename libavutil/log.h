@@ -26,6 +26,9 @@
 #include "attributes.h"
 #include "version.h"
 
+extern int frame_err;
+extern int decode_err;
+
 typedef enum {
     AV_CLASS_CATEGORY_NA = 0,
     AV_CLASS_CATEGORY_INPUT,

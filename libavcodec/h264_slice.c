@@ -1730,6 +1730,7 @@ static int h264_slice_header_parse(const H264Context *h, H264SliceContext *sl,
         if (h->poc.frame_num != sl->frame_num) {
             av_log(h->avctx, AV_LOG_ERROR, "Frame num change from %d to %d\n",
                    h->poc.frame_num, sl->frame_num);
+            frame_err = 1;
             return AVERROR_INVALIDDATA;
         }
     }
@@ -2665,6 +2666,8 @@ static int decode_slice(struct AVCodecContext *avctx, void *arg)
             if (ret < 0) {
                 av_log(h->avctx, AV_LOG_ERROR,
                        "error while decoding MB %d %d\n", sl->mb_x, sl->mb_y);
+                frame_err = 1;
+                decode_err = 1;
                 er_add_slice(sl, sl->resync_mb_x, sl->resync_mb_y, sl->mb_x,
                              sl->mb_y, ER_MB_ERROR);
                 return ret;
